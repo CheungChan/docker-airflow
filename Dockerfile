@@ -80,9 +80,6 @@ RUN chown -R airflow: ${AIRFLOW_HOME}
 
 EXPOSE 8080 5555 8793
 
-USER airflow
-WORKDIR ${AIRFLOW_HOME}
-ENTRYPOINT ["/entrypoint.sh"]
 # 更改时区
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -93,6 +90,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 COPY pip.conf ${AIRFLOW_HOME}/.pip/pip.conf
 COPY requirements.txt ${AIRFLOW_HOME}/requirements.txt
 RUN pip install -r ${AIRFLOW_HOME}/requirements.txt
+
+
+USER airflow
+WORKDIR ${AIRFLOW_HOME}
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["webserver"]
 # set default arg for entrypoint
