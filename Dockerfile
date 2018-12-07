@@ -6,6 +6,17 @@
 
 FROM python:3.6-slim
 LABEL maintainer="Puckel_"
+# 这个包国内源没有
+RUN apt-get update -y && apt-get install -y --no-install-recommends default-libmysqlclient-dev
+# 更改apt源
+# 有的国内源装不上,所以注释了
+#COPY apt.sources.list /etc/apt/sources.list
+# 更改时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
+RUN apt-get install tzdata
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -35,9 +46,12 @@ RUN set -ex \
         libpq-dev \
         git \
     ' \
-    && apt-get update -yqq \
-    && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends \
+    && apt-get update -y \
+    && apt-get upgrade -y
+
+COPY pip.conf ${AIRFLOW_HOME}/.pip/pip.conf
+
+RUN apt-get install -y --no-install-recommends \
         $buildDeps \
         freetds-bin \
         build-essential \
@@ -70,14 +84,20 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
+# 安装vim
+RUN apt-get install -y vim
+
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
+
 RUN chown -R airflow: ${AIRFLOW_HOME}
+RUN pip install -r requirements.txt
 
 EXPOSE 8080 5555 8793
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["webserver"] # set default arg for entrypoint
+CMD ["webserver"]
+# set default arg for entrypoint

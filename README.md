@@ -125,3 +125,10 @@ You can also use this to run a bash shell or any other command in the same envir
 # Wanna help?
 
 Fork, improve and PR. ;-)
+
+# different from pukel-airflow
+
+#### set the apt source to china
+#### set the timezone to UTC+8
+#### set the pip source to china
+#### if you want to add user before login, here it is!
