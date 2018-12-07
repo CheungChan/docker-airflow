@@ -35,10 +35,11 @@ RUN set -ex \
         libffi-dev \
         libpq-dev \
         git \
-    ' \
-   && apt-get update -yqq \
-   && apt-get upgrade -yqq \
-   && apt-get install -yqq --no-install-recommends \
+    '
+RUN apt-get update -yqq \
+   && apt-get upgrade -yqq
+
+RUN apt-get install -yqq --no-install-recommends \
         $buildDeps \
         freetds-bin \
         build-essential \
@@ -51,8 +52,8 @@ RUN set -ex \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
-    && pip install -U pip setuptools wheel \
+    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
+RUN pip install -U pip setuptools wheel \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
