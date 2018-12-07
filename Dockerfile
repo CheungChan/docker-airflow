@@ -91,7 +91,7 @@ COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 COPY requirements.txt ${AIRFLOW_HOME}/requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install -r ${AIRFLOW_HOME}/requirements.txt
 
 EXPOSE 8080 5555 8793
 
